@@ -1,0 +1,97 @@
+.parallax {
+  perspective: 1px;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  perspective-origin: 0 0;
+}
+
+.parallax__group {
+  position: relative;
+  height: 100vh;
+  transform-style: preserve-3d;
+}
+
+.parallax__layer {
+  transform-origin: 0 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.parallax__layer--ball {
+  transform: translateZ(0);
+  margin-top: 400px;
+  pointer-events: none;
+}
+
+.parallax__layer--base {
+  transform: translateZ(0);
+}
+
+.parallax__layer--foreground {
+  transform: translateZ(-1px) scale(2);
+}
+
+.parallax__layer--back {
+  transform: translateZ(-1.5px) scale(2.5);
+}
+
+.parallax__layer--deep {
+  transform: translateZ(-2.5px) scale(3.5);
+}
+
+section#hero {
+  color: white;
+}
+section#hero img {
+  width: 100%;
+}
+section#hero .info {
+  background-image: linear-gradient(to bottom, #000, transparent, transparent);
+  padding: 0 20px;
+}
+section#hero .info h1 {
+  font-size: 96px;
+  font-weight: bold;
+}
+section#hero .info p, section#hero .info button {
+  font-size: 24px;
+}
+section#hero .info button {
+  display: flex;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  transition: all 200ms;
+  color: #9e9e9e;
+}
+section#hero .info button i {
+  font-size: 18px;
+  color: #757575;
+  transition: all 200ms;
+  margin: 5px 0 0 10px;
+}
+section#hero .info button:hover {
+  color: #e0e0e0;
+}
+section#hero .info button:hover i {
+  color: #e0e0e0;
+  transform: translateY(3px);
+}
+
+section#stats {
+  margin-top: 700px;
+  height: 300vh;
+  background: #fff;
+}
+section#stats .svgWave {
+  transform: rotate(180deg);
+  margin-top: -100px;
+}
+
+/*# sourceMappingURL=App.css.map */
