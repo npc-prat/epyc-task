@@ -1,13 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import overviewData from './overview.json'
-import './App.css'
+import odiStats from './odi-stats.json'
+import { ResponsiveLine } from '@nivo/line'
 
+import './App.css'
 import foreground from './images/foreground.png'
 import background from './images/background.jpg'
 import ball from './images/ball.png'
+import { ResponsivePie } from '@nivo/pie'
 
 const App = () => {
-  console.log(overviewData)
   return (
     <div className='parallax'>
       <section id='hero' className='parallax__group'>
@@ -43,12 +45,17 @@ const App = () => {
               <h2>Here's an overview of his career</h2>
               <OverviewSection />
             </div>
+            <div className='container'>
+              <h2>A closer look at his performance in ODIs</h2>
+              <OdiSection />
+            </div>
           </main>
         </div>
         <footer>
           <div className="container">
             Made with <i className='fas fa-coffee' />, <i className='fas fa-code' /> and <i className='fas fa-heart'></i> by Pratik
-        </div>
+            <span>|<a href='https://github.com/pratvar/epyc-task'>View on Github</a></span>
+          </div>
         </footer>
       </section>
     </div >
@@ -57,38 +64,29 @@ const App = () => {
 
 const OverviewSection = () => {
   const [activeView, setActiveView] = useState('batting')
-
   return (
     <div className='overview'>
       <ul className='selector'>
         <span className={activeView} />
-        <li>
-          <button className={activeView === 'batting' ? 'active' : ''} onClick={() => { setActiveView('batting') }}>
-            Batting
-          </button>
-        </li>
-        <li>
-          <button className={activeView === 'bowling' ? 'active' : ''} onClick={() => { setActiveView('bowling') }}>
-            Bowling
-          </button>
-        </li>
-        <li>
-          <button className={activeView === 'fielding' ? 'active' : ''} onClick={() => { setActiveView('fielding') }}>
-            Fielding
-          </button>
-        </li>
+        {Object.keys(overviewData).map(tableName => (
+          <li key={tableName}>
+            <button className={activeView === tableName ? 'active' : ''} onClick={() => { setActiveView(tableName) }}>
+              {tableName[0].toUpperCase() + tableName.slice(1)}
+            </button>
+          </li>
+        ))}
       </ul>
       <div className={`table-slider ${activeView}`}>
-        {Object.keys(overviewData).map(table => (
-          <div className='table-wrapper'>
+        {Object.keys(overviewData).map(tableName => (
+          <div key={tableName} className='table-wrapper'>
             <table>
               <thead>
                 <tr>
-                  {overviewData[table].headers.map((header, index) => <th key={index} className={index === 0 ? 'left' : ''}>{header}</th>)}
+                  {overviewData[tableName].headers.map((header, index) => <th key={index} className={index === 0 ? 'left' : ''}>{header}</th>)}
                 </tr>
               </thead>
               <tbody>
-                {overviewData[table].rows.map((row, index) => (
+                {overviewData[tableName].rows.map((row, index) => (
                   <tr key={index}>
                     {row.map((item, index) => typeof item === 'object'
                       ? <td key={index} className={index === 0 ? 'left' : ''}>{item.name}<br /><span>{item.time}</span></td>
@@ -100,6 +98,236 @@ const OverviewSection = () => {
             </table>
           </div>
         ))}
+      </div>
+    </div>
+  )
+}
+
+const OdiSection = () => {
+
+  const [data, setData] = useState(null)
+  const [groupBy, setGroupBy] = useState('year')
+  const [activeView, setActiveView] = useState(0)
+  // const [countries, setCountries] = useState(null)
+  const [selectedCountry, selectCountry] = useState(0)
+
+  function getActiveViewLabel(activeView) {
+    switch (activeView) {
+      case 0: return 'batting_score'
+      case 1: return 'wickets'
+      case 2: return 'runs_conceded'
+      case 3: return 'catches'
+      default: break
+    }
+  }
+
+  useEffect(() => { // run only once
+    const colors = {
+      blue: '#2196f3',
+      yellow: '#ffc107',
+      red: '#f44336',
+      green: '#4caf50'
+    }
+    function getValue(input) {
+      if (Number.isInteger(input)) return input
+      else if (/^\d+[*]$/.test(input)) return parseInt(input.slice(0, -1))
+      else return 0
+    }
+
+    const countries = odiStats.reduce((array, game) => {
+      const country = game.opposition.slice(2)
+      let existingIndex = array.findIndex(item => item.country === country)
+      let exists = existingIndex !== -1
+      if (exists) array[existingIndex].matches += 1
+      else array.push({
+        country,
+        matches: 1,
+        lineChartData: [
+          { id: 'line', color: colors.blue, data: [] },
+          { id: 'line', color: colors.yellow, data: [] },
+          { id: 'line', color: colors.red, data: [] },
+          { id: 'line', color: colors.green, data: [] }
+        ],
+        pieChartData: [
+          { id: 'Won', label: 'Won', color: colors.green, value: 0 },
+          { id: 'Lost', label: 'Lost', color: colors.red, value: 0 },
+          { id: 'Tied', label: 'Tied', color: colors.yellow, value: 0 },
+          { id: 'N/R', label: 'N/R', color: colors.blue, value: 0 },
+        ]
+      })
+      return array
+    }, []).sort((a, b) => b.matches - a.matches)
+
+    const groupedByYear = odiStats.reduce((data, game) => {
+      const year = game.date.slice(-4)
+      data.lineChartData.forEach((item, i) => {
+        let existingIndex = item.data.findIndex(element => element.x === year)
+        let exists = existingIndex !== -1
+        if (exists) item.data[existingIndex].y += getValue(game[getActiveViewLabel(i)])
+        else item.data.push({ x: year, y: getValue(game[getActiveViewLabel(i)]) })
+      })
+      switch (game['match_result']) {
+        case 'won': data.pieChartData[0].value += 1
+          break
+        case 'lost': data.pieChartData[1].value += 1
+          break
+        case 'tied': data.pieChartData[2].value += 1
+          break
+        default: data.pieChartData[3].value += 1
+      }
+      return data
+    }, {
+      lineChartData: [
+        { id: 'line', color: colors.blue, data: [] },
+        { id: 'line', color: colors.yellow, data: [] },
+        { id: 'line', color: colors.red, data: [] },
+        { id: 'line', color: colors.green, data: [] }
+      ],
+      pieChartData: [
+        { id: 'Won', label: 'Won', color: colors.green, value: 0 },
+        { id: 'Lost', label: 'Lost', color: colors.red, value: 0 },
+        { id: 'Tied', label: 'Tied', color: colors.yellow, value: 0 },
+        { id: 'N/R', label: 'N/R', color: colors.blue, value: 0 },
+      ]
+    })
+
+    const groupedByOpposition = odiStats.reduce((countries, game) => {
+      const country = game.opposition.slice(2)
+      let index = countries.findIndex(item => item.country === country)
+      countries[index].lineChartData.forEach((item, i) => {
+        item.data.push({ x: item.data.length + 1, y: getValue(game[getActiveViewLabel(i)]) })
+      })
+      switch (game['match_result']) {
+        case 'won': countries[index].pieChartData[0].value += 1
+          break
+        case 'lost': countries[index].pieChartData[1].value += 1
+          break
+        case 'tied': countries[index].pieChartData[2].value += 1
+          break
+        default: countries[index].pieChartData[3].value += 1
+      }
+      return countries
+    }, countries)
+
+    setData({
+      year: groupedByYear,
+      opposition: groupedByOpposition,
+    })
+
+    console.log(countries)
+  }, [])
+
+  // useEffect(() => {
+  //   if (countries && countries.length) selectCountry(countries[0])
+  // }, [countries])
+
+  if (!data) return null
+
+  let activeData = groupBy === 'year' ? data.year : data.opposition[selectedCountry]
+
+  return (
+    <div className='odi-stats'>
+      <div className='group-selector'>
+        Group by
+        <ul className='selector'>
+          <span className={groupBy} />
+          <li><button onClick={() => { setGroupBy('year') }} className={groupBy === 'year' ? 'active' : ''}>Year</button></li>
+          <li><button onClick={() => { setGroupBy('opposition') }} className={groupBy === 'opposition' ? 'active' : ''}>Opposition</button></li>
+        </ul>
+      </div>
+      <div className='content-wrapper'>
+        <ul className={`country-selector ${groupBy === 'opposition' ? 'active' : ''}`}>
+          {data.opposition.map((item, index) => (
+            <li key={item.country}>
+              <button className={index === selectedCountry ? 'active' : ''} onClick={() => { selectCountry(index) }}>
+                {item.country}
+                <span>{`${item.matches} ${item.matches > 1 || item.matches === 0 ? 'matches' : 'match'}`}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className='content'>
+          <div className='overall-stats'>
+            <div className='header'>
+              <h3>Stats</h3>
+              <ul className='selector'>
+                <span className={'view-' + activeView} />
+                <li><button className={activeView === 0 ? 'active' : ''} onClick={() => { setActiveView(0) }}>Batting Score</button></li>
+                <li><button className={activeView === 1 ? 'active' : ''} onClick={() => { setActiveView(1) }}>Wickets</button></li>
+                <li><button className={activeView === 2 ? 'active' : ''} onClick={() => { setActiveView(2) }}>Runs Conceded</button></li>
+                <li><button className={activeView === 3 ? 'active' : ''} onClick={() => { setActiveView(3) }}>Catches</button></li>
+              </ul>
+            </div>
+            <div className='line-chart'>
+              <ResponsiveLine
+                data={[activeData.lineChartData[activeView]]}
+                margin={{ top: 5, right: 5, bottom: groupBy === 'year' ? 30 : 5, left: 35 }}
+                axisBottom={groupBy === 'year' ? {
+                  tickRotation: -45
+                } : null}
+                colors={data => data.color}
+                curve={'catmullRom'}
+                enableGridX={false}
+                enableArea
+                enableSlices='x'
+                sliceTooltip={({ slice }) => (
+                  <div style={{
+                    padding: '0.75em',
+                    backgroundColor: 'white',
+                    borderRadius: 5,
+                    boxShadow: '0 1px 2px #bdbdbd'
+                  }}>
+                    <div style={{ color: '#757575', marginBottom: '0.25em' }}>{slice.points[0].data.x}</div>
+                    <div>
+                      {getActiveViewLabel(activeView).split('_').map(word => word[0].toUpperCase() + word.slice(1)).join(' ') + ': '}
+                      <b>{slice.points[0].data.y}</b>
+                    </div>
+                  </div>
+                )}
+              />
+            </div>
+          </div>
+          <div className='match-stats'>
+            <h3>Match Results</h3>
+            <div className='stats-wrapper'>
+              <div className='pie-chart'>
+                <ResponsivePie
+                  data={activeData.pieChartData}
+                  margin={{ top: 15, right: 70, bottom: 15, left: 70 }}
+                  colors={params => params.data.color}
+                  innerRadius={0.4}
+                  arcLinkLabelsDiagonalLength={10}
+                  arcLinkLabelsStraightLength={15}
+                />
+              </div>
+              <ul>
+                <li>
+                  <i className='fas fa-baseball-ball' />
+                  <div>
+                    {activeData.pieChartData.reduce((acc, cur) => (acc + cur.value), 0)}<br />
+                    <span>Total</span>
+                  </div>
+                </li>
+                <li>
+                  {activeData.pieChartData[0].value}<br />
+                  <span>Won</span>
+                </li>
+                <li>
+                  {activeData.pieChartData[1].value}<br />
+                  <span>Lost</span>
+                </li>
+                <li>
+                  {activeData.pieChartData[2].value}<br />
+                  <span>Tied</span>
+                </li>
+                <li>
+                  {activeData.pieChartData[3].value}<br />
+                  <span>N/R</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
