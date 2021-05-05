@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/epyc-task/static/css/main.3308cae1.chunk.css",
+    "main.css": "/epyc-task/static/css/main.a6bfe074.chunk.css",
     "main.js": "/epyc-task/static/js/main.3320a3ee.chunk.js",
     "main.js.map": "/epyc-task/static/js/main.3320a3ee.chunk.js.map",
     "runtime-main.js": "/epyc-task/static/js/runtime-main.1861abb7.js",
@@ -8,7 +8,7 @@
     "static/js/2.b5907c3d.chunk.js": "/epyc-task/static/js/2.b5907c3d.chunk.js",
     "static/js/2.b5907c3d.chunk.js.map": "/epyc-task/static/js/2.b5907c3d.chunk.js.map",
     "index.html": "/epyc-task/index.html",
-    "static/css/main.3308cae1.chunk.css.map": "/epyc-task/static/css/main.3308cae1.chunk.css.map",
+    "static/css/main.a6bfe074.chunk.css.map": "/epyc-task/static/css/main.a6bfe074.chunk.css.map",
     "static/js/2.b5907c3d.chunk.js.LICENSE.txt": "/epyc-task/static/js/2.b5907c3d.chunk.js.LICENSE.txt",
     "static/media/background.260cfc31.jpg": "/epyc-task/static/media/background.260cfc31.jpg",
     "static/media/ball.eb9d317c.png": "/epyc-task/static/media/ball.eb9d317c.png",
@@ -17,7 +17,7 @@
   "entrypoints": [
     "static/js/runtime-main.1861abb7.js",
     "static/js/2.b5907c3d.chunk.js",
-    "static/css/main.3308cae1.chunk.css",
+    "static/css/main.a6bfe074.chunk.css",
     "static/js/main.3320a3ee.chunk.js"
   ]
 }
