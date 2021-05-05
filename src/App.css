@@ -289,7 +289,8 @@ section#body .odi-stats .group-selector .selector span.opposition {
   transform: translateX(64%);
 }
 section#body .odi-stats .content-wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto;
 }
 section#body .odi-stats .content {
   font-size: 16px;
@@ -332,7 +333,6 @@ section#body .odi-stats .country-selector {
 }
 section#body .odi-stats .country-selector.active {
   margin-right: 1.25em;
-  min-width: 13em;
   width: 13em;
   overflow-y: auto;
 }
@@ -364,25 +364,6 @@ section#body .odi-stats .country-selector button.active {
 section#body .odi-stats .country-selector button.active:hover {
   cursor: default;
   background-color: #f5f5f5;
-}
-section#body .odi-stats .country-selector::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: #F5F5F5;
-}
-section#body .odi-stats .country-selector::-webkit-scrollbar {
-  width: 0.4em;
-  background-color: #F5F5F5;
-}
-section#body .odi-stats .country-selector::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-color: #bdbdbd;
-  transition: all 100ms;
-}
-section#body .odi-stats .country-selector::-webkit-scrollbar-thumb:hover {
-  background-color: #aaa;
-}
-section#body .odi-stats .country-selector::-webkit-scrollbar-thumb:active {
-  background-color: #9e9e9e;
 }
 section#body .odi-stats .overall-stats, section#body .odi-stats .match-stats {
   padding: 0.5em 1em;
@@ -791,7 +772,7 @@ footer .github-link:hover {
     font-size: 24px;
   }
   section#body .odi-stats .content-wrapper {
-    flex-direction: column;
+    grid-template-columns: auto;
   }
   section#body .odi-stats .country-selector {
     height: 0;
@@ -800,7 +781,7 @@ footer .github-link:hover {
   }
   section#body .odi-stats .country-selector.active {
     width: 100%;
-    height: 17em;
+    height: 13.5em;
     margin: 0 0 17.5px 0;
   }
   section#body .odi-stats .country-selector button {
@@ -849,6 +830,9 @@ footer .github-link:hover {
   section#body .odi-stats .country-selector {
     grid-template-columns: repeat(3, auto);
   }
+  section#body .odi-stats .country-selector.active {
+    height: 16.75em;
+  }
 
   footer {
     font-size: 14px;
@@ -870,6 +854,12 @@ footer .github-link:hover {
 
   section#body .verdict {
     font-size: 18px;
+  }
+  section#body .odi-stats .country-selector {
+    grid-template-columns: auto auto;
+  }
+  section#body .odi-stats .country-selector.active {
+    height: 27em;
   }
 }
 

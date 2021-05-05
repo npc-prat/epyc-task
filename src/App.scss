@@ -274,7 +274,8 @@ section#body {
       }
     }
     .content-wrapper {
-      display: flex;
+      display: grid;
+      grid-template-columns: auto auto;
     }
     .content {
       font-size: 16px;
@@ -316,7 +317,6 @@ section#body {
       transition: all 400ms;
       &.active {
         margin-right: 1.25em;
-        min-width: 13em;
         width: 13em;
         overflow-y: auto;
       }
@@ -347,27 +347,6 @@ section#body {
             cursor: default;
             background-color: #f5f5f5;
           }
-        }
-      }
-      &::-webkit-scrollbar-track {
-        border-radius: 10px;
-        background-color: #F5F5F5;
-      }
-      
-      &::-webkit-scrollbar {
-        width: 0.4em;
-        background-color: #F5F5F5;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        border-radius: 10px;
-        background-color: #bdbdbd;
-        transition: all 100ms;
-        &:hover {
-          background-color: #aaa;
-        }
-        &:active {
-          background-color: #9e9e9e;
         }
       }
     }
@@ -805,7 +784,7 @@ footer {
     }
     .odi-stats {
       .content-wrapper {
-        flex-direction: column;
+        grid-template-columns: auto;
       }
       .country-selector {
         height: 0;
@@ -813,7 +792,7 @@ footer {
         grid-template-columns: repeat(4, auto);
         &.active {
           width: 100%;
-          height: 17em;
+          height: 13.5em;
           margin: 0 0 17.5px 0;
         }
         button {
@@ -872,6 +851,9 @@ footer {
     .odi-stats {
       .country-selector {
         grid-template-columns: repeat(3, auto);
+        &.active {
+          height: 16.75em;
+        }
       }
     }
   }
@@ -898,6 +880,14 @@ footer {
   section#body {
     .verdict {
       font-size: 18px;
+    }
+    .odi-stats {
+      .country-selector {
+        grid-template-columns: auto auto;
+        &.active {
+          height: 27em;
+        }
+      }
     }
   }
 }
