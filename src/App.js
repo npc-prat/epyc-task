@@ -18,20 +18,21 @@ const App = () => {
         <div className='parallax__layer parallax__layer--background'>
           <img src={background} alt='background' />
         </div>
-        <div className='parallax__layer parallax__layer--content info'>
-          <div className='infoWrapper'>
+        <div className='parallax__layer parallax__layer--content content-container'>
+          <div className='content-wrapper'>
             <h1>Sachin Tendulkar</h1>
-            <p>
-              Former Indian cricketer, widely regarded to be the <b>“greatest cricketer of all time”</b>.<br />
-              How true is it, though?
+            <p className='description'>
+              A former Indian cricketer, widely regarded to be the <b>“greatest cricketer of all time.”</b><br />
+              <i>–Wikipedia</i><br />
             </p>
+            <p>How true is it, though?</p>
             <button onClick={() => { document.querySelector('main').scrollIntoView({ behavior: 'smooth' }) }}>
               Let's find out! <i className='fas fa-chevron-down' />
             </button>
           </div>
         </div>
         <div className='parallax__layer parallax__layer--foreground' style={{ pointerEvents: 'none' }}>
-          <img src={foreground} alt='foreground' />
+          <img src={foreground} alt='foreground' className='foreground' />
         </div>
         <div className='parallax__layer parallax__layer--base ball'>
           <img src={ball} alt='ball' />
@@ -82,8 +83,9 @@ const App = () => {
         </div>
         <footer>
           <div className="container">
-            Made with <i className='fas fa-coffee' />, <i className='fas fa-code' /> and <i className='fas fa-heart'></i> by Pratik
-            <span>|<a href='https://github.com/pratvar/epyc-task'>View on Github</a></span>
+            Made with <i className='fas fa-coffee' />, <i className='fas fa-code' /> and <i className='fas fa-heart'></i>
+            &nbsp;by <a className='portfolio-link' href="https://pratvar.com">Pratik</a>
+            <span>|</span><a className='github-link' href='https://github.com/pratvar/epyc-task'>View on Github</a>
           </div>
         </footer>
       </section>
@@ -93,11 +95,12 @@ const App = () => {
 
 const OverviewSection = () => {
   const [activeView, setActiveView] = useState('batting')
+  const tables = Object.keys(overviewData)
   return (
     <div className='overview'>
       <ul className='selector'>
         <span className={activeView} />
-        {Object.keys(overviewData).map(tableName => (
+        {tables.map(tableName => (
           <li key={tableName}>
             <button className={activeView === tableName ? 'active' : ''} onClick={() => { setActiveView(tableName) }}>
               {tableName[0].toUpperCase() + tableName.slice(1)}
@@ -106,9 +109,9 @@ const OverviewSection = () => {
         ))}
       </ul>
       <div className={`table-slider ${activeView}`}>
-        {Object.keys(overviewData).map(tableName => (
+        {tables.map(tableName => (
           <div key={tableName} className='table-wrapper'>
-            <table>
+            <table className={tableName === activeView ? 'active' : ''}>
               <thead>
                 <tr>
                   {overviewData[tableName].headers.map((header, index) => <th key={index} className={index === 0 ? 'left' : ''}>{header}</th>)}
@@ -306,7 +309,7 @@ const OdiSection = () => {
               <div className='pie-chart'>
                 <ResponsivePie
                   data={activeData.pieChartData}
-                  margin={{ top: 15, right: 70, bottom: 15, left: 70 }}
+                  margin={{ top: 15, right: 60, bottom: 15, left: 60 }}
                   colors={params => params.data.color}
                   innerRadius={0.4}
                   arcLinkLabelsDiagonalLength={10}
