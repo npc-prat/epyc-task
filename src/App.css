@@ -289,13 +289,12 @@ section#body .odi-stats .group-selector .selector span.opposition {
   transform: translateX(64%);
 }
 section#body .odi-stats .content-wrapper {
+  width: 100%;
   display: grid;
   grid-template-columns: auto auto;
 }
 section#body .odi-stats .content {
   font-size: 16px;
-  max-width: max-content;
-  min-width: 0;
   width: 100%;
   display: grid;
   grid-template-columns: auto;
@@ -707,30 +706,6 @@ footer .github-link:hover {
   section#body .overview {
     font-size: 14px;
   }
-  section#body .odi-stats .overall-stats .header h3 {
-    margin-right: 0.25em;
-  }
-  section#body .odi-stats .overall-stats .selector button {
-    padding: 0.5em 0.25em;
-  }
-  section#body .odi-stats .overall-stats .selector span {
-    border-radius: 5px;
-  }
-  section#body .odi-stats .overall-stats .selector span.view-0 {
-    width: 7em;
-  }
-  section#body .odi-stats .overall-stats .selector span.view-1 {
-    width: 4.75em;
-    transform: translateX(7em);
-  }
-  section#body .odi-stats .overall-stats .selector span.view-2 {
-    width: 8.4em;
-    transform: translateX(11.6em);
-  }
-  section#body .odi-stats .overall-stats .selector span.view-3 {
-    width: 4.75em;
-    transform: translateX(20em);
-  }
 }
 @media only screen and (max-width: 768px) {
   .container {
@@ -808,6 +783,39 @@ footer .github-link:hover {
     margin-top: 0.9em;
   }
 
+  section#body .odi-stats .overall-stats .header {
+    width: 100%;
+  }
+  section#body .odi-stats .overall-stats .header h3 {
+    margin-right: 0.25em;
+  }
+  section#body .odi-stats .overall-stats .selector {
+    grid-template-columns: auto auto;
+    justify-items: center;
+    width: fit-content;
+  }
+  section#body .odi-stats .overall-stats .selector button {
+    padding: 0.5em 0.25em;
+  }
+  section#body .odi-stats .overall-stats .selector span {
+    border-radius: 5px;
+    height: 2.25em;
+  }
+  section#body .odi-stats .overall-stats .selector span.view-0 {
+    width: 8em;
+  }
+  section#body .odi-stats .overall-stats .selector span.view-1 {
+    width: 5em;
+    transform: translateX(8em);
+  }
+  section#body .odi-stats .overall-stats .selector span.view-2 {
+    width: 8.5em;
+    transform: translateX(-0.25em) translateY(2.35em);
+  }
+  section#body .odi-stats .overall-stats .selector span.view-3 {
+    width: 5em;
+    transform: translateX(8.05em) translateY(2.35em);
+  }
   section#body .verdict p {
     margin: 3em 2em 6em;
   }
@@ -832,6 +840,9 @@ footer .github-link:hover {
   }
   section#body .odi-stats .country-selector.active {
     height: 16.75em;
+  }
+  section#body .records {
+    grid-template-columns: auto auto;
   }
 
   footer {

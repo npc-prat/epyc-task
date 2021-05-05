@@ -274,13 +274,12 @@ section#body {
       }
     }
     .content-wrapper {
+      width: 100%;
       display: grid;
       grid-template-columns: auto auto;
     }
     .content {
       font-size: 16px;
-      max-width: max-content;
-      min-width: 0;
       width: 100%;
       display: grid;
       grid-template-columns: auto;
@@ -707,38 +706,6 @@ footer {
     .overview {
       font-size: 14px;
     }
-    .odi-stats {
-      .overall-stats {
-        .header {
-          h3 {
-            margin-right: 0.25em;
-          }
-        }
-        .selector {
-          button {
-            padding: 0.5em 0.25em;
-          }
-          span {
-            border-radius: 5px;
-            &.view-0 {
-              width: 7em;
-            }
-            &.view-1 {
-              width: 4.75em;
-              transform: translateX(7em);
-            }
-            &.view-2 {
-              width: 8.4em;
-              transform: translateX(11.6em);
-            }
-            &.view-3 {
-              width: 4.75em;
-              transform: translateX(20em);
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -824,6 +791,43 @@ footer {
     }
   }
   section#body {
+    .odi-stats {
+      .overall-stats {
+        .header {
+          width: 100%;
+          h3 {
+            margin-right: 0.25em;
+          }
+        }
+        .selector {
+          grid-template-columns: auto auto;
+          justify-items: center;
+          width: fit-content;
+          button {
+            padding: 0.5em 0.25em;
+          }
+          span {
+            border-radius: 5px;
+            height: 2.25em;
+            &.view-0 {
+              width: 8em;
+            }
+            &.view-1 {
+              width: 5em;
+              transform: translateX(8em);
+            }
+            &.view-2 {
+              width: 8.5em;
+              transform: translateX(-0.25em) translateY(2.35em);
+            }
+            &.view-3 {
+              width: 5em;
+              transform: translateX(8.05em) translateY(2.35em);
+            }
+          }
+        }
+      }
+    }
     .verdict {
       p {
         margin: 3em 2em 6em;
@@ -855,6 +859,9 @@ footer {
           height: 16.75em;
         }
       }
+    }
+    .records {
+      grid-template-columns: auto auto;
     }
   }
   footer {
