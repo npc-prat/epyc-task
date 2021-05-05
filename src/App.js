@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
+import { ResponsiveLine } from '@nivo/line'
+import { ResponsivePie } from '@nivo/pie'
+
 import overviewData from './overview.json'
 import odiStats from './odi-stats.json'
-import { ResponsiveLine } from '@nivo/line'
+import recordData from './records.json'
 
 import './App.css'
 import foreground from './images/foreground.png'
 import background from './images/background.jpg'
 import ball from './images/ball.png'
-import { ResponsivePie } from '@nivo/pie'
 
 const App = () => {
   return (
@@ -48,6 +50,33 @@ const App = () => {
             <div className='container'>
               <h2>A closer look at his performance in ODIs</h2>
               <OdiSection />
+            </div>
+            <div className='container'>
+              <h2>Some of Tendulkar's unbroken records <span>(as of May 2021)</span></h2>
+              <div className='records'>
+                {recordData.map((record, index) => (
+                  <div key={index} className='record'>
+                    <h4>{record.title}</h4>
+                    <span>{record.value}</span>
+                    <p>{record.format}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className='container verdict'>
+              <h2>And now, the verdict...</h2>
+              <p>
+                <i className='fas fa-award' />
+                Based on the data, we think it's fair to say that Sachin Tendulkar is, in fact, the&nbsp;
+                <span>
+                  GOAT🐐
+                  <div className='tooltip'>
+                    Greatest Of All Time<br />
+                    <a href="https://www.dictionary.com/e/slang/g-o-a-t/">Dictionary.com</a>
+                  </div>
+                </span>
+                &nbsp;in cricket.
+              </p>
             </div>
           </main>
         </div>
@@ -108,7 +137,6 @@ const OdiSection = () => {
   const [data, setData] = useState(null)
   const [groupBy, setGroupBy] = useState('year')
   const [activeView, setActiveView] = useState(0)
-  // const [countries, setCountries] = useState(null)
   const [selectedCountry, selectCountry] = useState(0)
 
   function getActiveViewLabel(activeView) {
@@ -121,12 +149,26 @@ const OdiSection = () => {
     }
   }
 
-  useEffect(() => { // run only once
+  useEffect(() => { // Run only once (on mount)
     const colors = {
       blue: '#2196f3',
       yellow: '#ffc107',
       red: '#f44336',
       green: '#4caf50'
+    }
+    const dataTemplate = {
+      lineChartData: [
+        { id: 'line', color: colors.blue, data: [] },
+        { id: 'line', color: colors.yellow, data: [] },
+        { id: 'line', color: colors.red, data: [] },
+        { id: 'line', color: colors.green, data: [] },
+      ],
+      pieChartData: [
+        { id: 'Won', label: 'Won', color: colors.green, value: 0 },
+        { id: 'Lost', label: 'Lost', color: colors.red, value: 0 },
+        { id: 'Tied', label: 'Tied', color: colors.yellow, value: 0 },
+        { id: 'N/R', label: 'N/R', color: colors.blue, value: 0 },
+      ]
     }
     function getValue(input) {
       if (Number.isInteger(input)) return input
@@ -134,30 +176,7 @@ const OdiSection = () => {
       else return 0
     }
 
-    const countries = odiStats.reduce((array, game) => {
-      const country = game.opposition.slice(2)
-      let existingIndex = array.findIndex(item => item.country === country)
-      let exists = existingIndex !== -1
-      if (exists) array[existingIndex].matches += 1
-      else array.push({
-        country,
-        matches: 1,
-        lineChartData: [
-          { id: 'line', color: colors.blue, data: [] },
-          { id: 'line', color: colors.yellow, data: [] },
-          { id: 'line', color: colors.red, data: [] },
-          { id: 'line', color: colors.green, data: [] }
-        ],
-        pieChartData: [
-          { id: 'Won', label: 'Won', color: colors.green, value: 0 },
-          { id: 'Lost', label: 'Lost', color: colors.red, value: 0 },
-          { id: 'Tied', label: 'Tied', color: colors.yellow, value: 0 },
-          { id: 'N/R', label: 'N/R', color: colors.blue, value: 0 },
-        ]
-      })
-      return array
-    }, []).sort((a, b) => b.matches - a.matches)
-
+    // Group data by year
     const groupedByYear = odiStats.reduce((data, game) => {
       const year = game.date.slice(-4)
       data.lineChartData.forEach((item, i) => {
@@ -176,50 +195,44 @@ const OdiSection = () => {
         default: data.pieChartData[3].value += 1
       }
       return data
-    }, {
-      lineChartData: [
-        { id: 'line', color: colors.blue, data: [] },
-        { id: 'line', color: colors.yellow, data: [] },
-        { id: 'line', color: colors.red, data: [] },
-        { id: 'line', color: colors.green, data: [] }
-      ],
-      pieChartData: [
-        { id: 'Won', label: 'Won', color: colors.green, value: 0 },
-        { id: 'Lost', label: 'Lost', color: colors.red, value: 0 },
-        { id: 'Tied', label: 'Tied', color: colors.yellow, value: 0 },
-        { id: 'N/R', label: 'N/R', color: colors.blue, value: 0 },
-      ]
-    })
+    }, { ...JSON.parse(JSON.stringify(dataTemplate)) })
 
-    const groupedByOpposition = odiStats.reduce((countries, game) => {
+    // Group data by opposition
+    const groupedByOpposition = odiStats.reduce((array, game) => {
       const country = game.opposition.slice(2)
-      let index = countries.findIndex(item => item.country === country)
-      countries[index].lineChartData.forEach((item, i) => {
+      let existingIndex = array.findIndex(item => item.country === country)
+      let exists = existingIndex !== -1
+      if (exists) array[existingIndex].matches += 1
+      else array.push({
+        country,
+        matches: 1,
+        ...JSON.parse(JSON.stringify(dataTemplate))
+      })
+      return array
+    }, []).sort((a, b) => b.matches - a.matches)
+    odiStats.forEach(game => {
+      const country = game.opposition.slice(2)
+      let index = groupedByOpposition.findIndex(item => item.country === country)
+      groupedByOpposition[index].lineChartData.forEach((item, i) => {
         item.data.push({ x: item.data.length + 1, y: getValue(game[getActiveViewLabel(i)]) })
       })
       switch (game['match_result']) {
-        case 'won': countries[index].pieChartData[0].value += 1
+        case 'won': groupedByOpposition[index].pieChartData[0].value += 1
           break
-        case 'lost': countries[index].pieChartData[1].value += 1
+        case 'lost': groupedByOpposition[index].pieChartData[1].value += 1
           break
-        case 'tied': countries[index].pieChartData[2].value += 1
+        case 'tied': groupedByOpposition[index].pieChartData[2].value += 1
           break
-        default: countries[index].pieChartData[3].value += 1
+        default: groupedByOpposition[index].pieChartData[3].value += 1
       }
-      return countries
-    }, countries)
+    })
 
     setData({
       year: groupedByYear,
       opposition: groupedByOpposition,
     })
 
-    console.log(countries)
   }, [])
-
-  // useEffect(() => {
-  //   if (countries && countries.length) selectCountry(countries[0])
-  // }, [countries])
 
   if (!data) return null
 
@@ -308,22 +321,10 @@ const OdiSection = () => {
                     <span>Total</span>
                   </div>
                 </li>
-                <li>
-                  {activeData.pieChartData[0].value}<br />
-                  <span>Won</span>
-                </li>
-                <li>
-                  {activeData.pieChartData[1].value}<br />
-                  <span>Lost</span>
-                </li>
-                <li>
-                  {activeData.pieChartData[2].value}<br />
-                  <span>Tied</span>
-                </li>
-                <li>
-                  {activeData.pieChartData[3].value}<br />
-                  <span>N/R</span>
-                </li>
+                <li>{activeData.pieChartData[0].value}<br /><span>Won</span></li>
+                <li>{activeData.pieChartData[1].value}<br /><span>Lost</span></li>
+                <li>{activeData.pieChartData[2].value}<br /><span>Tied</span></li>
+                <li>{activeData.pieChartData[3].value}<br /><span>N/R</span></li>
               </ul>
             </div>
           </div>
