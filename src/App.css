@@ -265,7 +265,8 @@ section#body .overview table span {
   color: #616161;
 }
 section#body .odi-stats {
-  width: fit-content;
+  min-width: 0;
+  width: max-content;
   margin: 0 auto;
   padding-bottom: 24px;
 }
@@ -294,6 +295,7 @@ section#body .odi-stats .content-wrapper {
   grid-template-columns: auto auto;
 }
 section#body .odi-stats .content {
+  min-width: 0;
   font-size: 16px;
   width: 100%;
   display: grid;
@@ -309,12 +311,14 @@ section#body .odi-stats .line-chart {
   min-width: 0;
   width: 100%;
   height: 12.5em;
+  resize: none;
 }
 section#body .odi-stats .pie-chart {
   max-width: 400px;
   min-width: 0;
   width: 100%;
   height: 15.625em;
+  resize: none;
 }
 section#body .odi-stats .country-selector {
   grid-row: span 2;
@@ -783,6 +787,9 @@ footer .github-link:hover {
     margin-top: 0.9em;
   }
 
+  section#body .odi-stats {
+    width: 100%;
+  }
   section#body .odi-stats .overall-stats .header {
     width: 100%;
   }
