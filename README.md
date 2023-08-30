@@ -1,6 +1,6 @@
 # Data Visualization - Sachin Tendulkar's Cricket Career
 
-**Hosted at:** [npcpratt.github.io/epyc-task](https://npc-prat.github.io/epyc-task)\
+**Hosted at:** [npc-prat.github.io/epyc-task](https://npc-prat.github.io/epyc-task)\
 **Framework:** React\
 **Libraries:** [Nivo](https://github.com/plouc/nivo)
 
